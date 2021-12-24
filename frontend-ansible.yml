@@ -1,0 +1,34 @@
+---
+- hosts: frontend
+  become: yes
+  gather_facts: yes
+  vars:
+      ansible_python_interpreter: /usr/bin/python3
+  tasks:
+  - debug: var=ansible_host
+  tasks:
+  - name: Install nginx
+    apt:
+          name: nginx
+          state: latest
+
+  - name: copy nginx file
+    copy:
+          src: /home/ubuntu/fundoo
+          dest: /etc/nginx/sites-available/
+
+  - name: configuring fundoo
+    command: sudo ln -s /etc/nginx/sites-available/fundoo /etc/nginx/sites-enabled/
+
+  - name: Removing default site
+    command: sudo rm /etc/nginx/sites-enabled/default
+
+  - name: stop nginx
+    service:
+          name: nginx
+          state: stopped
+
+  - name: start nginx
+    service:
+          name: nginx
+          state: started
